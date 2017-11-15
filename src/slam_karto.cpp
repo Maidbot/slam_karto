@@ -537,6 +537,14 @@ SlamKarto::laserCallback(const sensor_msgs::LaserScan::ConstPtr& scan)
   // Check whether we know about this laser yet
   karto::LaserRangeFinder* laser = getLaser(scan);
 
+  // Maidbot: let Slam Karto know how many points to
+  // expect in this scan. Without this, Karto assumes
+  // that each scan has the same size as the first
+  // recieved scan. This is not true for the RPLidar
+  laser->SetMinimumAngle(scan->angle_min);
+  laser->SetMaximumAngle(scan->angle_max);
+  laser->SetAngularResolution(scan->angle_increment);
+
   if(!laser)
   {
     ROS_WARN("Failed to create laser device for %s; discarding scan",
